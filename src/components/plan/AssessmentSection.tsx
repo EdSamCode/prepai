@@ -68,7 +68,7 @@ export default function AssessmentSection({
               ? "Excelente! Tienes una base solida."
               : percentage >= 60
               ? "Buen nivel! Hay areas para mejorar."
-              : "Necesitas reforzar algunos temas. El roadmap te ayudara."}
+              : "Necesitas reforzar algunos temas. El plan de estudio te ayudara."}
           </p>
           <button
             type="button"
@@ -113,7 +113,7 @@ export default function AssessmentSection({
         {/* Question */}
         <div>
           <span className="text-[10px] px-2 py-0.5 bg-neutral-800 rounded-full text-neutral-400 mb-2 inline-block">
-            {question.tecnologia}
+            {question.tema}
           </span>
           <p className="text-neutral-100 font-medium">{question.pregunta}</p>
         </div>

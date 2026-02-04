@@ -6,9 +6,11 @@ import SectionWrapper from "./SectionWrapper";
 
 interface RoadmapSectionProps {
   roadmap: FaseRoadmap[];
+  titulo: string;
+  subtitulo: string;
 }
 
-export default function RoadmapSection({ roadmap }: RoadmapSectionProps) {
+export default function RoadmapSection({ roadmap, titulo, subtitulo }: RoadmapSectionProps) {
   const [expandedPhase, setExpandedPhase] = useState<number | null>(0);
 
   return (
@@ -18,8 +20,8 @@ export default function RoadmapSection({ roadmap }: RoadmapSectionProps) {
           <path strokeLinecap="round" strokeLinejoin="round" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
         </svg>
       }
-      titulo="Roadmap de Aprendizaje"
-      subtitulo={`${roadmap.length} fases de preparacion`}
+      titulo={titulo}
+      subtitulo={`${roadmap.length} ${subtitulo.toLowerCase()}`}
     >
       <div className="space-y-3">
         {roadmap.map((fase, i) => {
@@ -62,15 +64,15 @@ export default function RoadmapSection({ roadmap }: RoadmapSectionProps) {
 
               {isExpanded && (
                 <div className="px-5 pb-5 space-y-4 border-t border-neutral-800">
-                  {/* Technologies */}
+                  {/* Topics */}
                   <div className="pt-4">
                     <div className="flex flex-wrap gap-2">
-                      {fase.tecnologias.map((tech, j) => (
+                      {fase.temas.map((tema, j) => (
                         <span
                           key={j}
                           className="px-2.5 py-1 text-xs font-medium rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20"
                         >
-                          {tech}
+                          {tema}
                         </span>
                       ))}
                     </div>

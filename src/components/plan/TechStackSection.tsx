@@ -1,4 +1,4 @@
-import type { TechStackItem } from "@/lib/types";
+import type { TemaClaveItem } from "@/lib/types";
 import SectionWrapper from "./SectionWrapper";
 
 const PRIORIDAD_COLORS: Record<string, string> = {
@@ -7,20 +7,13 @@ const PRIORIDAD_COLORS: Record<string, string> = {
   deseable: "bg-green-500/10 text-green-400 border-green-500/20",
 };
 
-const CATEGORIA_LABELS: Record<string, string> = {
-  lenguaje: "Lenguaje",
-  framework: "Framework",
-  herramienta: "Herramienta",
-  base_datos: "Base de Datos",
-  cloud: "Cloud",
-  otro: "Otro",
-};
-
 interface TechStackSectionProps {
-  techStack: TechStackItem[];
+  temasClave: TemaClaveItem[];
+  titulo: string;
+  subtitulo: string;
 }
 
-export default function TechStackSection({ techStack }: TechStackSectionProps) {
+export default function TechStackSection({ temasClave, titulo, subtitulo }: TechStackSectionProps) {
   return (
     <SectionWrapper
       icon={
@@ -28,34 +21,34 @@ export default function TechStackSection({ techStack }: TechStackSectionProps) {
           <path strokeLinecap="round" strokeLinejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
         </svg>
       }
-      titulo="Tech Stack"
-      subtitulo={`${techStack.length} tecnologias identificadas`}
+      titulo={titulo}
+      subtitulo={`${temasClave.length} ${subtitulo.toLowerCase()}`}
     >
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        {techStack.map((tech, i) => (
+        {temasClave.map((tema, i) => (
           <div
             key={i}
             className="bg-neutral-950 border border-neutral-800 rounded-xl p-4 space-y-2"
           >
             <div className="flex items-center justify-between">
-              <h3 className="font-semibold text-neutral-100">{tech.nombre}</h3>
+              <h3 className="font-semibold text-neutral-100">{tema.nombre}</h3>
               <span
                 className={`px-2 py-0.5 text-xs font-medium rounded-full border ${
-                  PRIORIDAD_COLORS[tech.prioridad] || PRIORIDAD_COLORS.deseable
+                  PRIORIDAD_COLORS[tema.prioridad] || PRIORIDAD_COLORS.deseable
                 }`}
               >
-                {tech.prioridad}
+                {tema.prioridad}
               </span>
             </div>
             <div className="flex items-center gap-2">
               <span className="text-xs px-2 py-0.5 bg-neutral-800 rounded-full text-neutral-400">
-                {CATEGORIA_LABELS[tech.categoria] || tech.categoria}
+                {tema.categoria}
               </span>
               <span className="text-xs text-neutral-600">
-                Nivel: {tech.nivelRequerido}
+                Nivel: {tema.nivelRequerido}
               </span>
             </div>
-            <p className="text-sm text-neutral-400">{tech.descripcion}</p>
+            <p className="text-sm text-neutral-400">{tema.descripcion}</p>
           </div>
         ))}
       </div>

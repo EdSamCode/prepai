@@ -1,12 +1,18 @@
-import type { HabilidadBlanda } from "@/lib/types";
+import type { HabilidadDesarrollar } from "@/lib/types";
 import SectionWrapper from "./SectionWrapper";
 
 interface SoftSkillsSectionProps {
-  softSkills: HabilidadBlanda[];
+  habilidades: HabilidadDesarrollar[];
+  titulo: string;
+  subtitulo: string;
+  ejemploLabel: string;
 }
 
 export default function SoftSkillsSection({
-  softSkills,
+  habilidades,
+  titulo,
+  subtitulo,
+  ejemploLabel,
 }: SoftSkillsSectionProps) {
   return (
     <SectionWrapper
@@ -15,11 +21,11 @@ export default function SoftSkillsSection({
           <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
         </svg>
       }
-      titulo="Habilidades Blandas"
-      subtitulo="Competencias no tecnicas que marcan la diferencia"
+      titulo={titulo}
+      subtitulo={subtitulo}
     >
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        {softSkills.map((skill, i) => (
+        {habilidades.map((skill, i) => (
           <div
             key={i}
             className="bg-neutral-950 border border-neutral-800 rounded-xl p-5 space-y-3"
@@ -60,8 +66,8 @@ export default function SoftSkillsSection({
 
             <div className="bg-purple-500/5 border border-purple-500/20 rounded-lg p-3">
               <p className="text-xs text-purple-300">
-                <span className="font-medium">En entrevista:</span>{" "}
-                {skill.ejemploEntrevista}
+                <span className="font-medium">{ejemploLabel}</span>{" "}
+                {skill.ejemploPractico}
               </p>
             </div>
           </div>

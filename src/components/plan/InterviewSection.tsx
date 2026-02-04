@@ -1,15 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import type { PreguntaEntrevista } from "@/lib/types";
+import type { PreguntaProfundizacion } from "@/lib/types";
 import SectionWrapper from "./SectionWrapper";
-
-const CATEGORIA_LABELS: Record<string, string> = {
-  tecnica: "Tecnica",
-  comportamental: "Comportamental",
-  sistema: "Diseno de Sistema",
-  algoritmo: "Algoritmo",
-};
 
 const DIFICULTAD_COLORS: Record<string, string> = {
   facil: "text-green-400",
@@ -18,23 +11,27 @@ const DIFICULTAD_COLORS: Record<string, string> = {
 };
 
 interface InterviewSectionProps {
-  entrevista: PreguntaEntrevista[];
+  preguntas: PreguntaProfundizacion[];
+  titulo: string;
+  subtitulo: string;
 }
 
 export default function InterviewSection({
-  entrevista,
+  preguntas,
+  titulo,
+  subtitulo,
 }: InterviewSectionProps) {
   const [expandedQ, setExpandedQ] = useState<number | null>(null);
   const [filtroCategoria, setFiltroCategoria] = useState<string>("todas");
 
   const categorias = [
     "todas",
-    ...new Set(entrevista.map((q) => q.categoria)),
+    ...new Set(preguntas.map((q) => q.categoria)),
   ];
   const filtered =
     filtroCategoria === "todas"
-      ? entrevista
-      : entrevista.filter((q) => q.categoria === filtroCategoria);
+      ? preguntas
+      : preguntas.filter((q) => q.categoria === filtroCategoria);
 
   return (
     <SectionWrapper
@@ -43,8 +40,8 @@ export default function InterviewSection({
           <path strokeLinecap="round" strokeLinejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
       }
-      titulo="Preguntas de Entrevista"
-      subtitulo={`${entrevista.length} preguntas con respuestas modelo`}
+      titulo={titulo}
+      subtitulo={`${preguntas.length} ${subtitulo.toLowerCase()}`}
     >
       <div className="space-y-4">
         {/* Category filters */}
@@ -60,7 +57,7 @@ export default function InterviewSection({
                   : "bg-neutral-800 text-neutral-400 hover:text-neutral-200"
               }`}
             >
-              {cat === "todas" ? "Todas" : CATEGORIA_LABELS[cat] || cat}
+              {cat === "todas" ? "Todas" : cat}
             </button>
           ))}
         </div>
@@ -85,7 +82,7 @@ export default function InterviewSection({
                     </p>
                     <div className="flex items-center gap-2 mt-1.5">
                       <span className="text-[10px] px-2 py-0.5 bg-neutral-800 rounded-full text-neutral-400">
-                        {CATEGORIA_LABELS[q.categoria] || q.categoria}
+                        {q.categoria}
                       </span>
                       <span
                         className={`text-[10px] ${

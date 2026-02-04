@@ -1,4 +1,5 @@
 import type { PlanCompleto } from "@/lib/types";
+import { getContextLabels } from "@/lib/types";
 import TechStackSection from "./plan/TechStackSection";
 import TimelineSection from "./plan/TimelineSection";
 import RoadmapSection from "./plan/RoadmapSection";
@@ -13,6 +14,8 @@ interface PlanViewProps {
 }
 
 export default function PlanView({ plan }: PlanViewProps) {
+  const labels = getContextLabels(plan.tipoContenido || "tema_general");
+
   return (
     <div id="plan-content" className="space-y-6">
       {/* Summary Card */}
@@ -23,7 +26,7 @@ export default function PlanView({ plan }: PlanViewProps) {
               {plan.resumen.titulo}
             </h1>
             <p className="text-indigo-400 font-medium mt-1">
-              {plan.resumen.empresa}
+              {plan.resumen.autorFuente}
             </p>
             <p className="text-sm text-neutral-400 mt-2 max-w-xl">
               {plan.resumen.descripcionBreve}
@@ -33,26 +36,44 @@ export default function PlanView({ plan }: PlanViewProps) {
             <span className="px-3 py-1 text-xs font-medium rounded-full bg-neutral-800 text-neutral-300">
               {plan.resumen.tipo}
             </span>
-            <span className="px-3 py-1 text-xs font-medium rounded-full bg-purple-500/10 text-purple-400 border border-purple-500/20">
-              {plan.resumen.nivelRequerido}
-            </span>
-            {plan.resumen.salarioEstimado && (
-              <span className="px-3 py-1 text-xs font-medium rounded-full bg-green-500/10 text-green-400 border border-green-500/20">
-                {plan.resumen.salarioEstimado}
+            {plan.resumen.metaFinal && (
+              <span className="px-3 py-1 text-xs font-medium rounded-full bg-purple-500/10 text-purple-400 border border-purple-500/20">
+                {plan.resumen.metaFinal}
               </span>
             )}
           </div>
         </div>
       </div>
 
-      <TechStackSection techStack={plan.techStack} />
+      <TechStackSection
+        temasClave={plan.temasClave}
+        titulo={labels.temasClaveTitle}
+        subtitulo={labels.temasClaveSubtitle}
+      />
       <TimelineSection timeline={plan.timeline} />
-      <RoadmapSection roadmap={plan.roadmap} />
+      <RoadmapSection
+        roadmap={plan.roadmap}
+        titulo={labels.roadmapTitle}
+        subtitulo={labels.roadmapSubtitle}
+      />
       <ResourcesSection recursos={plan.recursos} />
-      <ProjectsSection proyectos={plan.proyectos} />
-      <InterviewSection entrevista={plan.entrevista} />
+      <ProjectsSection
+        ejercicios={plan.ejercicios}
+        titulo={labels.ejerciciosTitle}
+        subtitulo={labels.ejerciciosSubtitle}
+      />
+      <InterviewSection
+        preguntas={plan.preguntas}
+        titulo={labels.preguntasTitle}
+        subtitulo={labels.preguntasSubtitle}
+      />
       <AssessmentSection evaluacion={plan.evaluacion} />
-      <SoftSkillsSection softSkills={plan.softSkills} />
+      <SoftSkillsSection
+        habilidades={plan.habilidades}
+        titulo={labels.habilidadesTitle}
+        subtitulo={labels.habilidadesSubtitle}
+        ejemploLabel={labels.habilidadEjemploLabel}
+      />
     </div>
   );
 }
