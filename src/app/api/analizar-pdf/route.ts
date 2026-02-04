@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { geminiModel } from "@/lib/gemini";
-import { buildSystemPrompt, buildUserPrompt } from "@/lib/prompts";
+import { buildSystemPrompt } from "@/lib/prompts";
 import { extractBase64Data } from "@/lib/utils";
 import type { NivelUsuario, PlanCompleto } from "@/lib/types";
 
@@ -35,38 +35,29 @@ export async function POST(request: NextRequest) {
     // Extract base64 data from data URL
     const base64Data = extractBase64Data(contenido);
 
-    // Convert base64 to Buffer for pdf-parse
-    const pdfBuffer = Buffer.from(base64Data, "base64");
-
-    // Dynamic import pdf-parse
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const pdfParse = require("pdf-parse");
-    const pdfData = await pdfParse(pdfBuffer);
-
-    const extractedText = pdfData.text?.trim();
-
-    if (!extractedText || extractedText.length < 20) {
-      return NextResponse.json(
-        {
-          error:
-            "No se pudo extraer suficiente texto del PDF. Asegurate de que contenga texto legible (no escaneado como imagen).",
-        },
-        { status: 422 }
-      );
-    }
-
-    // Truncate if too long (Gemini has token limits)
-    const textToAnalyze =
-      extractedText.length > 30000
-        ? extractedText.substring(0, 30000) + "\n\n[... texto truncado ...]"
-        : extractedText;
-
-    // Generate plan from extracted text
+    // Send PDF directly to Gemini (it supports PDFs natively as inlineData)
+    // This avoids using pdf-parse which requires Node.js fs module and fails on Vercel
     const systemPrompt = buildSystemPrompt(nivel);
-    const userPrompt = buildUserPrompt(textToAnalyze);
+    const userPromptText = `Analiza el contenido de este PDF y genera el plan de preparacion completo en formato JSON.
+Detecta automaticamente si es una oferta laboral, temario de examen, libro, certificacion u otro tipo de material y adapta el plan en consecuencia.
+
+Recuerda: devuelve UNICAMENTE el JSON valido, sin texto adicional.`;
 
     const planResult = await geminiModel.generateContent({
-      contents: [{ role: "user", parts: [{ text: userPrompt }] }],
+      contents: [
+        {
+          role: "user",
+          parts: [
+            {
+              inlineData: {
+                mimeType: "application/pdf",
+                data: base64Data,
+              },
+            },
+            { text: userPromptText },
+          ],
+        },
+      ],
       systemInstruction: { role: "user", parts: [{ text: systemPrompt }] },
     });
 
@@ -76,8 +67,22 @@ export async function POST(request: NextRequest) {
     try {
       plan = JSON.parse(responseText) as PlanCompleto;
     } catch {
+      // Retry once if JSON parsing fails
       const retryResult = await geminiModel.generateContent({
-        contents: [{ role: "user", parts: [{ text: userPrompt }] }],
+        contents: [
+          {
+            role: "user",
+            parts: [
+              {
+                inlineData: {
+                  mimeType: "application/pdf",
+                  data: base64Data,
+                },
+              },
+              { text: userPromptText },
+            ],
+          },
+        ],
         systemInstruction: { role: "user", parts: [{ text: systemPrompt }] },
       });
 

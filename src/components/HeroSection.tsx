@@ -2,15 +2,16 @@
 
 import { useEffect, useState } from "react";
 
+// Estructura: "Preparate para" + frase que completa gramaticalmente
 const ROTATING_TEXTS = [
-  "gran salto profesional",
-  "proximo examen",
+  "tu proximo gran reto",
   "dominar cualquier tema",
-  "aprender algo nuevo",
+  "aprobar ese examen",
   "conseguir ese empleo",
-  "aprobar con excelencia",
+  "aprender sin limites",
   "destacar en tu carrera",
-  "estudiar a profundidad",
+  "conquistar tu futuro",
+  "superar cualquier prueba",
 ];
 
 export default function HeroSection() {
@@ -31,7 +32,7 @@ export default function HeroSection() {
   return (
     <div className="text-center space-y-5 py-10">
       <h1 className="text-3xl sm:text-5xl font-bold text-neutral-100 leading-tight">
-        Prepara tu{" "}
+        Preparate para{" "}
         <span
           className={`inline-block text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 transition-all duration-400 ${
             isAnimating
