@@ -18,12 +18,17 @@ export default function Home() {
   const { isLoading, error, generatePlan } = usePlanGeneration();
   const [textoContenido, setTextoContenido] = useState("");
   const [imagenBase64, setImagenBase64] = useState<string | null>(null);
+  const [pdfBase64, setPdfBase64] = useState<string | null>(null);
+  const [pdfName, setPdfName] = useState<string | null>(null);
   const [nivel, setNivel] = useState<NivelUsuario>("principiante");
-  const [activeTab, setActiveTab] = useState<"texto" | "imagen">("texto");
+  const [activeTab, setActiveTab] = useState<"texto" | "imagen" | "pdf">(
+    "texto"
+  );
 
   const canSubmit =
     (activeTab === "texto" && textoContenido.trim().length > 10) ||
-    (activeTab === "imagen" && imagenBase64 !== null);
+    (activeTab === "imagen" && imagenBase64 !== null) ||
+    (activeTab === "pdf" && pdfBase64 !== null);
 
   const handleAnalyze = async () => {
     if (activeTab === "imagen" && imagenBase64) {
@@ -33,8 +38,17 @@ export default function Home() {
       }
     }
 
-    const tipo = activeTab;
-    const contenido = tipo === "texto" ? textoContenido : imagenBase64!;
+    let tipo: "texto" | "imagen" | "pdf" = activeTab;
+    let contenido: string;
+
+    if (tipo === "texto") {
+      contenido = textoContenido;
+    } else if (tipo === "imagen") {
+      contenido = imagenBase64!;
+    } else {
+      contenido = pdfBase64!;
+      tipo = "pdf";
+    }
 
     const plan = await generatePlan(tipo, contenido, nivel);
     if (plan) {
@@ -43,7 +57,6 @@ export default function Home() {
     }
   };
 
-  // Sync the active tab from InputPanel
   const handleTextoChange = (value: string) => {
     setTextoContenido(value);
     setActiveTab("texto");
@@ -52,6 +65,12 @@ export default function Home() {
   const handleImagenChange = (value: string | null) => {
     setImagenBase64(value);
     if (value) setActiveTab("imagen");
+  };
+
+  const handlePdfChange = (base64: string | null, name: string | null) => {
+    setPdfBase64(base64);
+    setPdfName(name);
+    if (base64) setActiveTab("pdf");
   };
 
   return (
@@ -67,6 +86,9 @@ export default function Home() {
             onTextoChange={handleTextoChange}
             imagenBase64={imagenBase64}
             onImagenChange={handleImagenChange}
+            pdfBase64={pdfBase64}
+            pdfName={pdfName}
+            onPdfChange={handlePdfChange}
           />
 
           <LevelSelector nivel={nivel} onChange={setNivel} />

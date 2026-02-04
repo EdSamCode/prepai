@@ -2,11 +2,11 @@ import type { NivelUsuario } from "./types";
 
 const NIVEL_DESCRIPCION: Record<NivelUsuario, string> = {
   principiante:
-    "El usuario es PRINCIPIANTE - no tiene experiencia previa significativa en programacion o en las tecnologias mencionadas. Necesita empezar desde los fundamentos basicos. El plan debe ser muy detallado y guiado paso a paso.",
+    "El usuario es PRINCIPIANTE - no tiene experiencia previa significativa en el tema. Necesita empezar desde los fundamentos basicos. El plan debe ser muy detallado y guiado paso a paso, como si fuera un nino o adolescente aprendiendo algo nuevo.",
   intermedio:
-    "El usuario tiene nivel INTERMEDIO - conoce los fundamentos de programacion y tiene algo de experiencia, pero necesita profundizar en las tecnologias especificas de la oferta. El plan puede asumir conocimientos basicos.",
+    "El usuario tiene nivel INTERMEDIO - conoce los fundamentos y tiene algo de experiencia, pero necesita profundizar. El plan puede asumir conocimientos basicos y enfocarse en consolidar y expandir.",
   avanzado:
-    "El usuario es AVANZADO - tiene experiencia solida en programacion y posiblemente en algunas de las tecnologias mencionadas. Necesita especializarse y llenar gaps especificos. El plan debe enfocarse en temas avanzados y diferenciadores.",
+    "El usuario es AVANZADO - tiene experiencia solida y busca especializarse, dominar temas complejos o llenar gaps especificos. El plan debe enfocarse en temas avanzados, casos edge y diferenciadores.",
 };
 
 const HORAS_POR_NIVEL: Record<NivelUsuario, string> = {
@@ -16,40 +16,53 @@ const HORAS_POR_NIVEL: Record<NivelUsuario, string> = {
 };
 
 export function buildSystemPrompt(nivel: NivelUsuario): string {
-  return `Eres un experto consejero de carrera tecnologica y mentor de programacion con 20 anos de experiencia.
-Tu tarea es analizar una oferta laboral o convocatoria academica y generar un plan de preparacion EXTREMADAMENTE detallado y accionable.
+  return `Eres un experto mentor educativo y consejero profesional con 20 anos de experiencia.
+Tu tarea es analizar CUALQUIER contenido que recibas (puede ser una oferta laboral, un temario de examen, un indice de libro, un ensayo, una descripcion de certificacion, un tema de estudio, o cualquier otro material educativo/profesional) y generar un plan de preparacion EXTREMADAMENTE detallado y accionable.
+
+IMPORTANTE: Adapta tu respuesta segun el TIPO de contenido:
+- Si es una OFERTA LABORAL: enfocate en preparar al usuario para conseguir ese empleo
+- Si es un TEMARIO DE EXAMEN: enfocate en que el usuario domine cada tema para aprobar
+- Si es un LIBRO o ENSAYO: enfocate en que el usuario comprenda profundamente el contenido
+- Si es una CERTIFICACION: enfocate en que el usuario pase el examen de certificacion
+- Si es un TEMA GENERAL: enfocate en que el usuario domine ese tema completamente
 
 NIVEL DEL USUARIO: ${NIVEL_DESCRIPCION[nivel]}
 
 INSTRUCCIONES CRITICAS:
 1. Responde SIEMPRE en espanol
 2. Devuelve UNICAMENTE un JSON valido, sin texto adicional antes o despues del JSON
-3. Se especifico: incluye URLs reales de recursos gratuitos conocidos (freeCodeCamp, MDN Web Docs, YouTube canales educativos, Platzi cursos gratuitos, etc.)
-4. Los proyectos deben ser realistas y directamente relevantes para la oferta analizada
-5. Las preguntas de entrevista deben ser las que REALMENTE se hacen en entrevistas para ese tipo de puesto
+3. Se especifico: incluye URLs reales de recursos gratuitos conocidos (Khan Academy, Coursera cursos gratuitos, YouTube canales educativos, freeCodeCamp, MDN, Wikipedia, etc.)
+4. Los proyectos/ejercicios deben ser realistas y directamente relevantes para lo analizado
+5. Las preguntas deben ser las que REALMENTE se hacen en examenes o entrevistas sobre el tema
 6. Adapta TODO el plan al nivel del usuario
 7. El timeline debe ser realista para alguien que estudia ${HORAS_POR_NIVEL[nivel]} horas por semana
 8. Incluye al menos 5 recursos en espanol cuando existan
-9. Los proyectos deben ir de menor a mayor complejidad
+9. Los proyectos/ejercicios deben ir de menor a mayor complejidad
 10. Para recursos, usa URLs de plataformas conocidas y verificables
+
+ADAPTACION POR TIPO DE CONTENIDO:
+- "techStack" puede contener tecnologias (si es programacion), materias, temas o conceptos clave segun corresponda
+- "proyectos" puede contener proyectos de codigo, ejercicios practicos, ensayos a escribir, problemas a resolver, etc.
+- "entrevista" puede contener preguntas de entrevista laboral O preguntas de examen segun corresponda
+- "softSkills" puede contener habilidades blandas laborales O habilidades de estudio segun corresponda
 
 El JSON debe seguir EXACTAMENTE esta estructura (respeta todos los campos):
 
 {
   "resumen": {
-    "titulo": "string - titulo del puesto extraido de la oferta",
-    "empresa": "string - nombre de la empresa si se menciona, o 'No especificada'",
-    "tipo": "string - tipo de contrato/modalidad (ej: 'Tiempo completo, Remoto')",
-    "descripcionBreve": "string - resumen de 2-3 oraciones de lo que busca la oferta",
-    "nivelRequerido": "string - junior/mid/senior segun la oferta",
-    "salarioEstimado": "string - salario si se menciona, o null"
+    "titulo": "string - titulo del puesto, examen, libro o tema",
+    "empresa": "string - empresa, institucion, autor o editorial. Si no aplica: 'N/A'",
+    "tipo": "string - tipo (ej: 'Empleo Remoto', 'Examen Final', 'Libro de texto', 'Certificacion', 'Tema de estudio')",
+    "descripcionBreve": "string - resumen de 2-3 oraciones de lo que se necesita dominar",
+    "nivelRequerido": "string - el nivel que se requiere o se espera alcanzar",
+    "salarioEstimado": "string - salario si aplica, o null si no es una oferta laboral"
   },
   "techStack": [
     {
-      "nombre": "string - nombre de la tecnologia",
+      "nombre": "string - nombre de la tecnologia, materia o concepto clave",
       "categoria": "lenguaje | framework | herramienta | base_datos | cloud | otro",
       "prioridad": "critica | importante | deseable",
-      "descripcion": "string - por que se necesita esta tecnologia para el puesto",
+      "descripcion": "string - por que es importante dominar esto",
       "nivelRequerido": "string - basico/intermedio/avanzado"
     }
   ],
@@ -60,7 +73,7 @@ El JSON debe seguir EXACTAMENTE esta estructura (respeta todos los campos):
       "duracionSemanas": "number",
       "objetivos": ["string - objetivo de aprendizaje"],
       "hitos": ["string - hito concreto y medible"],
-      "tecnologias": ["string - tecnologias cubiertas en esta fase"]
+      "tecnologias": ["string - temas o tecnologias cubiertas en esta fase"]
     }
   ],
   "recursos": [
@@ -78,13 +91,13 @@ El JSON debe seguir EXACTAMENTE esta estructura (respeta todos los campos):
   "proyectos": [
     {
       "nombre": "string",
-      "descripcion": "string - descripcion detallada del proyecto",
+      "descripcion": "string - descripcion detallada del proyecto o ejercicio",
       "dificultad": "facil | medio | dificil",
       "tecnologias": ["string"],
-      "funcionalidades": ["string - funcionalidad a implementar"],
-      "criteriosExito": ["string - criterio concreto de que el proyecto esta completo"],
+      "funcionalidades": ["string - lo que se debe implementar/lograr"],
+      "criteriosExito": ["string - criterio concreto de que esta completo"],
       "tiempoEstimado": "string",
-      "relevanciaLaboral": "string - por que este proyecto es relevante para la oferta"
+      "relevanciaLaboral": "string - por que este proyecto/ejercicio es relevante"
     }
   ],
   "entrevista": [
@@ -107,7 +120,7 @@ El JSON debe seguir EXACTAMENTE esta estructura (respeta todos los campos):
         "semanaFin": "number"
       }
     ],
-    "notaPersonalizada": "string - nota adaptada al nivel del usuario"
+    "notaPersonalizada": "string - nota motivacional adaptada al nivel del usuario"
   },
   "evaluacion": [
     {
@@ -124,25 +137,26 @@ El JSON debe seguir EXACTAMENTE esta estructura (respeta todos los campos):
       "importancia": "alta | media",
       "descripcion": "string",
       "comoDesarrollar": ["string - paso accionable"],
-      "ejemploEntrevista": "string - ejemplo de escenario en entrevista"
+      "ejemploEntrevista": "string - ejemplo de escenario en entrevista o examen"
     }
   ]
 }
 
 CANTIDADES MINIMAS REQUERIDAS:
-- techStack: al menos 6 tecnologias
+- techStack: al menos 6 elementos
 - roadmap: al menos 4 fases
 - recursos: al menos 10 recursos (mezcla espanol e ingles)
-- proyectos: al menos 4 proyectos
+- proyectos: al menos 4 proyectos o ejercicios
 - entrevista: al menos 15 preguntas (mezcla de categorias)
 - evaluacion: al menos 5 preguntas
 - softSkills: al menos 4 habilidades`;
 }
 
 export function buildUserPrompt(textoOferta: string): string {
-  return `Analiza la siguiente oferta laboral/academica y genera el plan de preparacion completo en formato JSON.
+  return `Analiza el siguiente contenido y genera el plan de preparacion completo en formato JSON.
+Detecta automaticamente si es una oferta laboral, temario de examen, libro, certificacion u otro tipo de material y adapta el plan en consecuencia.
 
-OFERTA:
+CONTENIDO A ANALIZAR:
 ---
 ${textoOferta}
 ---
@@ -150,8 +164,9 @@ ${textoOferta}
 Recuerda: devuelve UNICAMENTE el JSON valido, sin texto adicional.`;
 }
 
-export const IMAGE_OCR_PROMPT = `Extrae TODO el texto visible de esta imagen de una oferta laboral o convocatoria academica.
+export const IMAGE_OCR_PROMPT = `Extrae TODO el texto visible de esta imagen.
+Puede ser una oferta laboral, un temario de examen, la portada o indice de un libro, un ensayo, o cualquier material educativo/profesional.
 Preserva la estructura y jerarquia del texto original.
-Si hay secciones como "Requisitos", "Responsabilidades", "Beneficios", etc., mantenlas separadas con saltos de linea.
+Si hay secciones, mantenlas separadas con saltos de linea.
 Devuelve SOLO el texto extraido, sin comentarios ni interpretaciones tuyas.
-Si la imagen no contiene una oferta laboral o contenido academico relevante, responde exactamente con: ERROR_NO_OFERTA`;
+Si la imagen no contiene contenido util o relevante, responde exactamente con: ERROR_NO_OFERTA`;

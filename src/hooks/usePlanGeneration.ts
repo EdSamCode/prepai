@@ -7,18 +7,24 @@ interface UsePlanGenerationReturn {
   isLoading: boolean;
   error: string | null;
   generatePlan: (
-    tipo: "texto" | "imagen",
+    tipo: "texto" | "imagen" | "pdf",
     contenido: string,
     nivel: NivelUsuario
   ) => Promise<PlanCompleto | null>;
 }
+
+const ENDPOINT_MAP: Record<string, string> = {
+  texto: "/api/analizar",
+  imagen: "/api/analizar-imagen",
+  pdf: "/api/analizar-pdf",
+};
 
 export function usePlanGeneration(): UsePlanGenerationReturn {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const generatePlan = async (
-    tipo: "texto" | "imagen",
+    tipo: "texto" | "imagen" | "pdf",
     contenido: string,
     nivel: NivelUsuario
   ): Promise<PlanCompleto | null> => {
@@ -26,8 +32,7 @@ export function usePlanGeneration(): UsePlanGenerationReturn {
     setError(null);
 
     try {
-      const endpoint =
-        tipo === "texto" ? "/api/analizar" : "/api/analizar-imagen";
+      const endpoint = ENDPOINT_MAP[tipo];
 
       const res = await fetch(endpoint, {
         method: "POST",
